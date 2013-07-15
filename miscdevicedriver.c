@@ -1,17 +1,33 @@
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
+#include <linux/miscdevice.h>
 
-int __init init_mdd(void)
+static struct miscdevice hello_dev={
+        MISC_DYNAMIC_MINOR,
+        "hello",
+
+};
+
+
+
+int __init init_hello(void)
 {
-        printk(KERN_ALERT "[Module Message] miscdevicedriver start!!\n");
-        return 0;
+        int ret;
+        ret = misc_register(&hello_dev);
+        if(ret)
+        printk(KERN_ERR "Unable to Hello,misc dev \n");
+
+        return ret;
 }
 
-void __exit exit_mdd(void)
+void __exit exit_hello(void)
 {
-        printk(KERN_ALERT "[Module Message] miscdevicedriver end!!\n");
+        printk(KERN_ALERT "bye~!\n");
+        misc_deregister(&hello_dev);
 }
-module_init(init_mdd);
-module_exit(exit_mdd);
+
+
+module_init(init_hello);
+module_exit(exit_hello);
 MODULE_LICENSE("GPL");
